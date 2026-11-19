@@ -1,103 +1,113 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Leonida Trophy Guide — GTA VI trophies for PS5</title>
-<link rel="stylesheet" href="style.css">
+<title>Leonida Trophy Guide — GTA VI Platinum Tracker</title>
+<meta name="description" content="Offline guide and tracker for all 55 Grand Theft Auto VI trophies on PlayStation 5: checklist, roadmap, missables, and a cited guide to every trophy.">
+<link rel="stylesheet" href="css/main.css">
 </head>
 <body>
 <header class="masthead">
-  <div class="masthead-text">
-    <p class="kicker">Grand Theft Auto VI &middot; PlayStation 5 &middot; 55 trophies</p>
-    <h1>Leonida Trophy Guide</h1>
-    <p class="lede">Every trophy, in your own words, with a cited guide beside each one — plus a tracker that remembers your progress, a roadmap to the platinum, and the one trophy you can miss.</p>
+  <div class="masthead-inner">
+    <div>
+      <p class="eyebrow">Grand Theft Auto VI &middot; PlayStation 5 &middot; 55 trophies</p>
+      <h1>Leonida Trophy Guide</h1>
+      <p class="tagline">Every trophy, its guide, and your road to the platinum — saved in your browser, working fully offline.</p>
+    </div>
+    <div class="progress-card" id="progressCard" aria-label="Platinum progress">
+      <p class="progress-big"><span id="earnedCount">0</span><span class="progress-of"> / 55</span></p>
+      <p class="progress-label">trophies earned &middot; <span id="progressPct">0%</span> to the platinum</p>
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <p class="progress-grades" id="gradeCounts"></p>
+    </div>
   </div>
-  <div class="progress-card" id="progressCard">
-    <p class="progress-big"><span id="earnedCount">0</span><span class="progress-of"> / 55 earned</span></p>
-    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-    <p class="progress-sub" id="progressSub">0% to the platinum</p>
-    <p class="grade-counts" id="gradeCounts"></p>
-  </div>
+  <nav class="tabs" aria-label="Guide sections">
+    <button class="tab is-active" id="tabChecklist" data-view="checklist" type="button">Checklist</button>
+    <button class="tab" id="tabRoadmap" data-view="roadmap" type="button">Roadmap to Platinum</button>
+    <button class="tab" id="tabMissables" data-view="missables" type="button">Missables</button>
+  </nav>
 </header>
 
-<nav class="tabs" aria-label="Guide sections">
-  <button type="button" class="tab active" data-view="checklist">Checklist</button>
-  <button type="button" class="tab" data-view="roadmap">Roadmap to Platinum</button>
-  <button type="button" class="tab" data-view="missables">Missables</button>
-</nav>
-
-<section class="controls" aria-label="Tracker controls">
-  <label class="control search-control">Search
-    <input id="search" type="search" placeholder="Trophy name or description…" autocomplete="off">
-  </label>
-  <label class="control">Kind
-    <select id="kindFilter">
-      <option value="all">All kinds</option>
-      <option value="story">Story</option>
-      <option value="missable">Missable</option>
-      <option value="collectibles">Collectibles</option>
-      <option value="activities">Activities</option>
-      <option value="platinum">Platinum</option>
-    </select>
-  </label>
-  <label class="control">Grade
-    <select id="gradeFilter">
-      <option value="all">All grades</option>
-      <option value="platinum">Platinum</option>
-      <option value="gold">Gold</option>
-      <option value="silver">Silver</option>
-      <option value="bronze">Bronze</option>
-    </select>
-  </label>
-  <label class="control">Show
-    <select id="statusFilter">
-      <option value="all">Earned + unearned</option>
-      <option value="earned">Earned only</option>
-      <option value="unearned">Unearned only</option>
-    </select>
-  </label>
-  <label class="control check-control"><input id="spoilerToggle" type="checkbox" checked> Hide story spoilers until earned</label>
-  <div class="control buttons">
-    <button id="exportBtn" type="button">Export progress</button>
-    <label class="import-btn">Import progress <input id="importInput" type="file" accept="application/json"></label>
-  </div>
-</section>
-
 <main class="layout">
-  <div class="main-col">
-    <section id="view-checklist" class="view">
-      <p class="view-note" id="resultCount"></p>
-      <ul class="trophy-list" id="trophyList"></ul>
-    </section>
+  <section class="panel" id="checklistView" aria-label="Trophy checklist">
+    <div class="toolbar">
+      <label class="search-box">
+        <span class="visually-hidden">Search trophies</span>
+        <input type="search" id="searchInput" placeholder="Search a trophy, mission or activity…" autocomplete="off">
+      </label>
+      <label class="filter-field">Kind
+        <select id="kindFilter">
+          <option value="all">All kinds</option>
+          <option value="story">Story</option>
+          <option value="missable">Missable</option>
+          <option value="collectibles">Collectibles</option>
+          <option value="activities">Activities</option>
+        </select>
+      </label>
+      <label class="filter-field">Grade
+        <select id="gradeFilter">
+          <option value="all">All grades</option>
+          <option value="platinum">Platinum</option>
+          <option value="gold">Gold</option>
+          <option value="silver">Silver</option>
+          <option value="bronze">Bronze</option>
+        </select>
+      </label>
+      <label class="filter-field">Show
+        <select id="earnedFilter">
+          <option value="all">All trophies</option>
+          <option value="earned">Earned only</option>
+          <option value="remaining">Still to earn</option>
+        </select>
+      </label>
+      <label class="spoiler-toggle">
+        <input type="checkbox" id="spoilerToggle" checked>
+        <span>Hide story spoilers</span>
+      </label>
+    </div>
+    <p class="list-meta" id="listMeta"></p>
+    <ol class="trophy-list" id="trophyList"></ol>
+    <div class="save-row">
+      <button type="button" id="exportBtn">Export progress</button>
+      <button type="button" id="importBtn">Import progress</button>
+      <input type="file" id="importFile" accept=".json,application/json" hidden>
+      <button type="button" id="resetBtn" class="quiet">Reset progress</button>
+      <p class="save-note" id="saveNote">Progress saves automatically in this browser.</p>
+    </div>
+  </section>
 
-    <section id="view-roadmap" class="view hidden">
-      <h2>Roadmap to the platinum</h2>
-      <p class="view-note">Built from the official descriptions: story first, side strands as they unlock, the one missable early, collectibles as you travel, then the grinds and 100% completion. PowerPyx rates the run about 4/10 difficulty and roughly 200 hours.</p>
-      <ol class="roadmap" id="roadmapList"></ol>
-    </section>
+  <section class="panel is-hidden" id="roadmapView" aria-label="Roadmap to the platinum">
+    <h2>Roadmap to the platinum</h2>
+    <p class="lede">Built from the official trophy descriptions alone. One playthrough is enough for everything except the long grinds — and the game has no mission replay, so keep a manual save at the start of every chapter and one before the final mission.</p>
+    <ol class="roadmap" id="roadmapList"></ol>
+  </section>
 
-    <section id="view-missables" class="view hidden">
-      <h2>Missable trophies</h2>
-      <p class="view-note">Only one trophy is reported as possibly missable. Everything else is earned in one playthrough, and the 100% checklist has nothing missable on it.</p>
-      <ul class="trophy-list" id="missableList"></ul>
-      <aside class="save-advice">
-        <h3>Save advice</h3>
-        <p>Keep a manual save at the start of every chapter and one before the final mission. There is no mission replay, so a chapter-start save is your only way back if a meditation spot or a stranger chain slips past.</p>
-      </aside>
-    </section>
-  </div>
+  <section class="panel is-hidden" id="missablesView" aria-label="Missable trophies">
+    <h2>Missable trophies</h2>
+    <p class="lede">Only one trophy is reported as possibly missable. Everything else can be earned after the story, in any order, with no deadline.</p>
+    <div id="missableList"></div>
+    <div class="save-advice">
+      <h3>How to protect your run</h3>
+      <ul>
+        <li>Keep a manual save at the start of every chapter — there is no mission replay.</li>
+        <li>Keep one more manual save just before the final mission.</li>
+        <li>Never turn a cheat on during a trophy run: published guides report that cheats disable trophies. Source: PowerPyx.</li>
+        <li>Do the meditation spots as you meet them; do not leave them all for after the story.</li>
+      </ul>
+    </div>
+  </section>
 
-  <aside class="detail" id="detailPane" aria-live="polite">
-    <p class="detail-empty">Select a trophy to read its full guide, sources and difficulty.</p>
+  <aside class="panel detail-pane" id="detailPane" aria-label="Trophy guide" aria-live="polite">
+    <p class="detail-empty">Pick any trophy in the checklist to see its guide, its sources, its difficulty hint and whether it can be missed.</p>
   </aside>
 </main>
 
-<footer class="footer">
-  <p>Names, descriptions and grades are as PlayStation publishes them. Guides are written in our own words and cite their sources beside each trophy. Sources consulted: PowerPyx, GTABase, PSNProfiles, Exophase and EGamers. Where a step is not pinned down by a source, the guide says so plainly.</p>
-  <p>Works fully offline: no network calls, no outside images, no Rockstar artwork. Progress is saved in your browser (localStorage) and never leaves it.</p>
+<footer class="colophon">
+  <p>Trophy names, descriptions and grades are PlayStation's official list as tracked by Exophase and PSNProfiles. Every guide is written in our own words for this guide; each one names its sources beside it. No Rockstar artwork is used anywhere. This guide works fully offline — it loads nothing from the network.</p>
+  <p>Platinum difficulty about 4/10, about 200 hours. Sources: PowerPyx, GTABase.</p>
 </footer>
 
-<script type="module" src="app.js"></script>
+<script type="module" src="js/main.js"></script>
 </body>
 </html>

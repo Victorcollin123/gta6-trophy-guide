@@ -1,30 +1,46 @@
-// Filtering for the trophy checklist: one pure function, so the list, the
-// missables view and the counts all agree on what "visible" means.
+// filters.js — search, kind and grade filters, and the spoiler rule.
+//
+// The spoiler setting hides the name and description of a hidden trophy
+// until it is earned. Nothing else is ever hidden: grades, kinds and counts
+// stay visible so the list still reads as a checklist.
 
-export function visibleTrophies(trophies, options) {
-  const query = (options.search || '').trim().toLowerCase();
+export function spoilerMasks(trophy, state) {
+  return state.spoilerHidden && trophy.hidden && !state.earned.includes(trophy.name);
+}
+
+export function displayName(trophy, state) {
+  return spoilerMasks(trophy, state) ? "Hidden trophy" : trophy.name;
+}
+
+export function displayDescription(trophy, state) {
+  return spoilerMasks(trophy, state)
+    ? "Hidden until earned — its name and description stay secret on PlayStation too."
+    : trophy.description;
+}
+
+export function applyFilters(trophies, state, query) {
+  const needle = query.search.trim().toLowerCase();
   return trophies.filter((trophy) => {
-    if (options.kind !== 'all' && trophy.kind !== options.kind) return false;
-    if (options.grade !== 'all' && trophy.grade !== options.grade) return false;
-    if (options.status === 'earned' && !options.earned.has(trophy.id)) return false;
-    if (options.status === 'unearned' && options.earned.has(trophy.id)) return false;
-    if (query) {
+    if (query.kind !== "all" && trophy.kind !== query.kind) return false;
+    if (query.grade !== "all" && trophy.grade !== query.grade) return false;
+    const earned = state.earned.includes(trophy.name);
+    if (query.earned === "earned" && !earned) return false;
+    if (query.earned === "remaining" && earned) return false;
+    if (needle) {
       const haystack = `${trophy.name} ${trophy.description} ${trophy.guide}`.toLowerCase();
-      if (!haystack.includes(query)) return false;
+      if (!haystack.includes(needle)) return false;
     }
     return true;
   });
 }
 
-export function spoilerMasked(trophy, spoilersOn, earned) {
-  // The spoiler setting hides story trophies until they are earned.
-  return spoilersOn && trophy.kind === 'story' && !earned.has(trophy.id);
-}
-
-export function gradeLabel(grade) {
-  return grade.charAt(0).toUpperCase() + grade.slice(1);
-}
-
-export function kindLabel(kind) {
-  return kind === 'platinum' ? 'Platinum' : kind.charAt(0).toUpperCase() + kind.slice(1);
+export function countByGrade(trophies, state) {
+  const counts = { platinum: [0, 0], gold: [0, 0], silver: [0, 0], bronze: [0, 0] };
+  for (const trophy of trophies) {
+    const slot = counts[trophy.grade];
+    if (!slot) continue;
+    slot[1] += 1;
+    if (state.earned.includes(trophy.name)) slot[0] += 1;
+  }
+  return counts;
 }
