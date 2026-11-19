@@ -34,11 +34,17 @@ function copyTreeInto(sourceDir: string, targetDir: string): void {
   }
 }
 
+// Fail loudly, before copying anything, when a required input is missing:
+// a half-built output directory would look like a finished hand-in.
+function requireDir(dir: string, label: string): void {
+  if (!existsSync(dir)) throw new Error(`${label} is missing from the repository`);
+}
+
 function handInEntry(): void {
   const appDir = join(repoRoot, "app");
   const shotsDir = join(repoRoot, "screenshots");
-  if (!existsSync(appDir)) throw new Error("app/ is missing from the repository");
-  if (!existsSync(shotsDir)) throw new Error("screenshots/ is missing from the repository");
+  requireDir(appDir, "app/");
+  requireDir(shotsDir, "screenshots/");
   copyTreeInto(appDir, join(outDir, "app"));
   copyTreeInto(shotsDir, join(outDir, "screenshots"));
   const dossier = buildDossier(outDir, dossierCaps);

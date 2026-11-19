@@ -22,6 +22,14 @@ const mediaTypes: Record<string, string> = {
   ".svg": "image/svg+xml",
 };
 
+// Maps a file extension to the content type the browser needs to render it
+// correctly. Unknown extensions fall back to a generic binary type so the
+// browser downloads them instead of guessing — guessing once served a JSON
+// file as HTML in an earlier draft of this server.
+function contentTypeFor(filePath: string): string {
+  return mediaTypes[extname(filePath)] ?? "application/octet-stream";
+}
+
 const server = createServer((request, response) => {
   const path = decodeURIComponent(new URL(request.url ?? "/", "http://localhost").pathname);
   const target = resolve(join(appRoot, path === "/" ? "index.html" : path));
@@ -30,7 +38,7 @@ const server = createServer((request, response) => {
     response.end("not found\n");
     return;
   }
-  response.writeHead(200, { "content-type": mediaTypes[extname(target)] ?? "application/octet-stream" });
+  response.writeHead(200, { "content-type": contentTypeFor(target) });
   createReadStream(target).pipe(response);
 });
 

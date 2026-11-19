@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Leonida Trophy Guide — GTA VI Platinum Tracker</title>
 <meta name="description" content="Offline guide and tracker for all 55 Grand Theft Auto VI trophies on PlayStation 5: checklist, roadmap, missables, and a cited guide to every trophy.">
+<meta name="theme-color" content="#0f1a12">
+<!-- The checklist, roadmap and missables panels are all in the document;
+     views.js toggles which one is shown, so switching tabs never reloads. -->
 <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
@@ -69,10 +72,10 @@
     <p class="list-meta" id="listMeta"></p>
     <ol class="trophy-list" id="trophyList"></ol>
     <div class="save-row">
-      <button type="button" id="exportBtn">Export progress</button>
-      <button type="button" id="importBtn">Import progress</button>
+      <button type="button" id="exportBtn" aria-label="Export progress as a JSON file">Export progress</button>
+      <button type="button" id="importBtn" aria-label="Import progress from a JSON file">Import progress</button>
       <input type="file" id="importFile" accept=".json,application/json" hidden>
-      <button type="button" id="resetBtn" class="quiet">Reset progress</button>
+      <button type="button" id="resetBtn" class="quiet" aria-label="Reset progress, clearing all earned trophies">Reset progress</button>
       <p class="save-note" id="saveNote">Progress saves automatically in this browser.</p>
     </div>
   </section>

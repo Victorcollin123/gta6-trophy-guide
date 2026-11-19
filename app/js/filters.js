@@ -18,6 +18,16 @@ export function displayDescription(trophy, state) {
     : trophy.description;
 }
 
+// The search covers the name, the official description and our guide text,
+// so a trophy can be found by a mission or activity it mentions even when
+// neither appears in its title. Matching is case-insensitive and the query
+// is trimmed, so stray spaces around a pasted search never hide results.
+export function matchesSearch(trophy, needle) {
+  if (!needle) return true;
+  const haystack = `${trophy.name} ${trophy.description} ${trophy.guide}`.toLowerCase();
+  return haystack.includes(needle);
+}
+
 export function applyFilters(trophies, state, query) {
   const needle = query.search.trim().toLowerCase();
   return trophies.filter((trophy) => {
@@ -26,10 +36,7 @@ export function applyFilters(trophies, state, query) {
     const earned = state.earned.includes(trophy.name);
     if (query.earned === "earned" && !earned) return false;
     if (query.earned === "remaining" && earned) return false;
-    if (needle) {
-      const haystack = `${trophy.name} ${trophy.description} ${trophy.guide}`.toLowerCase();
-      if (!haystack.includes(needle)) return false;
-    }
+    if (!matchesSearch(trophy, needle)) return false;
     return true;
   });
 }

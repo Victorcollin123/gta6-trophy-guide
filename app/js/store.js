@@ -6,17 +6,25 @@
 
 export const STORE_KEY = "leonida-trophy-guide-v1";
 
+// The fresh state for a first visit: nothing earned yet, spoilers hidden.
+// Every recovery path in loadSavedProgress returns this same shape, so the
+// rest of the app can always rely on `earned` being an array of strings
+// and `spoilerHidden` being a boolean.
+export function defaultProgress() {
+  return { earned: [], spoilerHidden: true };
+}
+
 export function loadSavedProgress() {
   try {
     const raw = localStorage.getItem(STORE_KEY);
-    if (!raw) return { earned: [], spoilerHidden: true };
+    if (!raw) return defaultProgress();
     const parsed = JSON.parse(raw);
     return {
       earned: Array.isArray(parsed.earned) ? parsed.earned.filter((n) => typeof n === "string") : [],
       spoilerHidden: parsed.spoilerHidden !== false,
     };
   } catch {
-    return { earned: [], spoilerHidden: true };
+    return defaultProgress();
   }
 }
 
